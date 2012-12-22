@@ -3,7 +3,9 @@
 # ~~~~
 
 # Home page
-GET     /m                          controllers.mots.Mots.index
+POST    /m/json                     controllers.Mots.json
+
+GET     /m                          controllers.Mots.index
 
 GET     /                           controllers.Homepage.index
 

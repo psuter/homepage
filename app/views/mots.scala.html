@@ -1,7 +1,137 @@
-@(msg : String)
+@main("Les mots", true) {
+<style>
+a {
+    color : inherit;
+}
+</style>
+    <div class="row">
+        <div class="span12">
+            <h2>Les mots</h2>
+            <hr>
+        </div>
+    </div> 
 
-@main("Mots") {
-    <h1>Listes de mots</h1>
+    <div class="row">
+        <div class="span3">
+            <br>
 
-    <p>@msg</p>
+            <label for="lengthSlider">Longueur (<span id="minShown">1</span>-<span id="maxShown">21</span>)</label>
+            <div style="width: 90%; margin: auto;">
+            <div id="lengthSlider"></div>
+            </div>
+
+            <br>
+
+            <label>Incluant les lettres</label>
+            <input type="text" id="contains">
+
+            <br>
+
+            <label class="checkbox">
+                <input type="checkbox" id="distinct"> Lettres uniques
+            </label>
+            <label class="checkbox">
+                <input type="checkbox" id="palindrome"> Palindrome
+            </label>
+
+            <br>
+
+            <label>Trier par</label>
+            <select id="ordering">
+                <option value="n">Égal</option>
+                <option value="a">Alphabétique</option>
+                <option value="l">Longueur</option>
+                <option value="f">Usage</option>
+            </select>
+
+            <input type="button" class="btn btn-primary" id="clicker" value="Hop !">
+        </div>
+        <div class="span9">
+            <h4 id="summarybox"></h4>
+            <p id="resultbox"></p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="span12">
+            <hr>
+        </div>
+    </div> 
+
+    <script>
+    $(document).ready(function () {
+        $("#lengthSlider").slider({
+            range: true,
+            min: 1,
+            max: 21,
+            values: [ 1, 21 ],
+            slide: function( event, ui ) {
+                $("#minShown").html(ui.values[0]);
+                $("#maxShown").html(ui.values[1]);
+            }
+        });
+
+        $("#clicker").click(function() {
+            var minLength, maxLength, query;
+
+            minLength = parseInt($("#lengthSlider").slider("values", 0), 10);
+            if(minLength === NaN) {
+                minLength = -1;
+            }
+
+            maxLength = parseInt($("#lengthSlider").slider("values", 1), 10);
+            if(maxLength === NaN) {
+                maxLength = -1;
+            }
+
+            query = {
+                minLength  : minLength,
+                maxLength  : maxLength,
+                contains   : $("#contains").val(),
+                distinct   : $("#distinct").prop("checked"),
+                palindrome : $("#palindrome").prop("checked"),
+                ordering   : $("#ordering").val()
+            };
+
+            $('#summarybox').html("Chargement...");
+    
+            $.ajax({
+                url : '@routes.Mots.json',
+                type : "post",
+                headers : {
+                    "Content-Type" : "application/json"
+                },
+                dataType : "json",
+                data : JSON.stringify(query),
+                success : function(res) {
+                    var builder, count;
+
+                    builder = "";
+
+                    $.each(res.words, function(w) {
+                        builder = builder + '<a href="http://dictionnaire.tv5.org/?mot=' + res.words[w] + '" target="_blank">' + res.words[w] + '</a>, ';
+                    });
+
+                    if(builder !== "") {
+                        builder = builder.slice(0, -2);
+                    }
+
+                    $('#resultbox').html(builder);
+
+                    count = parseInt(res.count, 10);
+                    
+                    if(count === NaN || count < 0) {
+                        $('#summarybox').html("Erreur ?");
+                    } else if(count === 0) {
+                        $('#summarybox').html("Aucun résultat");
+                    } else if(count === 1) {
+                        $('#summarybox').html("Un résultat");
+                    } else {
+                        $('#summarybox').html(count + " résultats");
+                    }
+                }
+            });
+        });
+    });
+    </script>
 }
