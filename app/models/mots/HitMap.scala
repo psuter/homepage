@@ -1,7 +1,19 @@
 package models.mots
 
-final class HitMap private() {
+final class HitMap private(word : String) {
   private val hits : Array[Byte] = Array.fill(26)(0)
+
+  for(c <- word.toLowerCase; i = HitMap.indexOf(c) if i >= 0) {
+    hits(i) = (hits(i) + 1.toByte).asInstanceOf[Byte]
+  }
+
+  val isEmpty   : Boolean = hits.forall(_ == 0)
+  val total     : Int = hits.sum // also known as length.
+  val max       : Int = if(isEmpty) 0 else hits.max
+  val min       : Int = if(isEmpty) 0 else hits.filter(_ > 0).min
+  val canonical : String = ((0 until 26).toSeq.map { i =>
+    ('a' + i).toChar.toString * hits(i)
+  }).mkString("")
 
   def contains(hitMap : HitMap) : Boolean = {
     var i = 0
@@ -14,24 +26,11 @@ final class HitMap private() {
     return true;
   }
 
-  def isEmpty : Boolean = {
-    hits.forall(_ == 0)
-  }
-
-  def total : Int = hits.sum
-
-  def max : Int = hits.max
 }
 
 case object HitMap {
   def forWord(word : String) : HitMap = {
-    val hm = new HitMap()
-
-    for(c <- word.toLowerCase; i = indexOf(c) if i >= 0) {
-      hm.hits(i) = (hm.hits(i) + 1.toByte).asInstanceOf[Byte]
-    }
-
-    hm
+    new HitMap(word)
   }
 
   private def indexOf(char : Char) : Int = char match {

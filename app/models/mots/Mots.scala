@@ -21,12 +21,13 @@ object Mots {
   private case class Entry(
     word : String,
     normalized : String,
-    length : Int,
-    distinct : Boolean,
     palindrome : Boolean,
     frequency : Double,
     hitMap : HitMap
-  )
+  ) {
+    val length   = hitMap.total
+    val distinct = (hitMap.max == 1)
+  }
   
   private lazy val setAndMaxLength = build
 
@@ -34,6 +35,7 @@ object Mots {
   private lazy val entriesByWord = entries.sortBy(_.word)
   private lazy val entriesBySize = entries.sortBy(_.length)
   private lazy val entriesByFreq = entries.sortBy(e => -e.frequency)
+  private lazy val entriesByAnag = entries.sortBy(_.hitMap.canonical)
 
   private def maxLength : Int = setAndMaxLength._2
 
@@ -48,6 +50,8 @@ object Mots {
     var s = Set[Entry]()
 
     var maxLength = 0
+    var maxMin    = -1
+    var maxMax    = -1
 
     def record(w : String, f : Double, needsNorm : Boolean) {
       val n = if(needsNorm) {
@@ -55,12 +59,10 @@ object Mots {
       } else {
         w
       }
-      val length = n.length
-      val isDistinct = n.toSet.size == length
       val isPalindrome = {
         var i = 0
         var possible = true
-        val hl = length / 2
+        val hl = n.length / 2
         val r = n.reverse
         while(possible && i < hl) {
           if(n(i) != r(i)) possible = false
@@ -70,10 +72,19 @@ object Mots {
       }
       val hitMap = HitMap.forWord(w)
 
-      val entry = Entry(w, n, length, isDistinct, isPalindrome, f, hitMap)
+      val entry = Entry(w, n, isPalindrome, f, hitMap)
 
-      if (length > maxLength)
-        maxLength = length
+      if (entry.length > maxLength) {
+        maxLength = entry.length
+      }
+
+      if (entry.hitMap.min > maxMin) {
+        maxMin = entry.hitMap.min
+      }
+
+      if (entry.hitMap.max > maxMax) {
+        maxMax = entry.hitMap.max
+      }
 
       s += entry
     }
@@ -93,6 +104,9 @@ object Mots {
     }
 
     // println("Max length : " + maxLength)
+    // println("Max max    : " + maxMax)
+    // println("Max min    : " + maxMin)
+
     scanner.close()
 
     (s,maxLength)
@@ -152,6 +166,7 @@ object Mots {
       case Some("a") => entriesByWord.view.filter(matches).map(_.word).force
       case Some("l") => entriesBySize.view.filter(matches).map(_.word).force
       case Some("f") => entriesByFreq.view.filter(matches).map(_.word).force
+      case Some("c") => entriesByAnag.view.filter(matches).map(_.word).force
       case _         => entries.view.filter(matches).map(_.word).force
     }
   }

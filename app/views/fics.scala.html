@@ -1,0 +1,224 @@
+@()(implicit request : RequestHeader)
+
+@main("FICS Stargazing", false) {
+    <style>
+        td.square {
+            width: 72px;
+            height: 72px;
+            font-size: 50px;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        td.light {
+        }
+
+        td.dark {
+        }
+    </style>
+
+    <div class="row">
+        <div class="span12">
+            <h2>FICS Stargazing</h2>
+            <p>The board below shows ongoing games on the <a href="http://www.freechess.org">Free Internet Chess Server</a>.
+            <hr>
+        </div>
+    </div> 
+
+    <div class="row">
+        <div class="span10 offset1">
+            <div style="margin: auto;">
+            <table>
+                <tr>
+                    <td id="sa8" class="square light"></td>
+                    <td id="sb8" class="square dark"></td>
+                    <td id="sc8" class="square light"></td>
+                    <td id="sd8" class="square dark"></td>
+                    <td id="se8" class="square light"></td>
+                    <td id="sf8" class="square dark"></td>
+                    <td id="sg8" class="square light"></td>
+                    <td id="sh8" class="square dark"></td>
+                </tr>
+                <tr>
+                    <td id="sa7" class="square dark"></td>
+                    <td id="sb7" class="square light"></td>
+                    <td id="sc7" class="square dark"></td>
+                    <td id="sd7" class="square light"></td>
+                    <td id="se7" class="square dark"></td>
+                    <td id="sf7" class="square light"></td>
+                    <td id="sg7" class="square dark"></td>
+                    <td id="sh7" class="square light"></td>
+                </tr>
+                <tr>
+                    <td id="sa6" class="square light"></td>
+                    <td id="sb6" class="square dark"></td>
+                    <td id="sc6" class="square light"></td>
+                    <td id="sd6" class="square dark"></td>
+                    <td id="se6" class="square light"></td>
+                    <td id="sf6" class="square dark"></td>
+                    <td id="sg6" class="square light"></td>
+                    <td id="sh6" class="square dark"></td>
+                </tr>
+                <tr>
+                    <td id="sa5" class="square dark"></td>
+                    <td id="sb5" class="square light"></td>
+                    <td id="sc5" class="square dark"></td>
+                    <td id="sd5" class="square light"></td>
+                    <td id="se5" class="square dark"></td>
+                    <td id="sf5" class="square light"></td>
+                    <td id="sg5" class="square dark"></td>
+                    <td id="sh5" class="square light"></td>
+                </tr>
+                <tr>
+                    <td id="sa4" class="square light"></td>
+                    <td id="sb4" class="square dark"></td>
+                    <td id="sc4" class="square light"></td>
+                    <td id="sd4" class="square dark"></td>
+                    <td id="se4" class="square light"></td>
+                    <td id="sf4" class="square dark"></td>
+                    <td id="sg4" class="square light"></td>
+                    <td id="sh4" class="square dark"></td>
+                </tr>
+                <tr>
+                    <td id="sa3" class="square dark"></td>
+                    <td id="sb3" class="square light"></td>
+                    <td id="sc3" class="square dark"></td>
+                    <td id="sd3" class="square light"></td>
+                    <td id="se3" class="square dark"></td>
+                    <td id="sf3" class="square light"></td>
+                    <td id="sg3" class="square dark"></td>
+                    <td id="sh3" class="square light"></td>
+                </tr>
+                <tr>
+                    <td id="sa2" class="square light"></td>
+                    <td id="sb2" class="square dark"></td>
+                    <td id="sc2" class="square light"></td>
+                    <td id="sd2" class="square dark"></td>
+                    <td id="se2" class="square light"></td>
+                    <td id="sf2" class="square dark"></td>
+                    <td id="sg2" class="square light"></td>
+                    <td id="sh2" class="square dark"></td>
+                </tr>
+                <tr>
+                    <td id="sa1" class="square dark"></td>
+                    <td id="sb1" class="square light"></td>
+                    <td id="sc1" class="square dark"></td>
+                    <td id="sd1" class="square light"></td>
+                    <td id="se1" class="square dark"></td>
+                    <td id="sf1" class="square light"></td>
+                    <td id="sg1" class="square dark"></td>
+                    <td id="sh1" class="square light"></td>
+                </tr>
+            </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="span12">
+            <hr>
+        </div>
+    </div> 
+
+    <script>
+    $(document).ready(function () {
+      var board, lightImageArray, darkImageArray, squareIDFromIndex, updateBoard, com;
+
+
+      // a1 is at 0, a2 is at 7, etc.
+      // 0 empty
+      // 1 pawn
+      // 2 rook
+      // 3 knight
+      // 4 bishop
+      // 5 queen
+      // 6 king
+      // (for black, add 6)
+      board = [
+        2, 3, 4, 5, 6, 4, 3, 2,
+        1, 1, 1, 1, 1, 1, 1, 1,
+        0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0,
+        7, 7, 7, 7, 7, 7, 7, 7,
+        8, 9, 10, 11, 12, 10, 9, 8
+      ];
+
+      lightImageArray = [
+        'url(@routes.Assets.at("images/f/lsq72.png"))',
+        'url(@routes.Assets.at("images/f/pll72.png"))',
+        'url(@routes.Assets.at("images/f/rll72.png"))',
+        'url(@routes.Assets.at("images/f/nll72.png"))',
+        'url(@routes.Assets.at("images/f/bll72.png"))',
+        'url(@routes.Assets.at("images/f/qll72.png"))',
+        'url(@routes.Assets.at("images/f/kll72.png"))',
+        'url(@routes.Assets.at("images/f/pdl72.png"))',
+        'url(@routes.Assets.at("images/f/rdl72.png"))',
+        'url(@routes.Assets.at("images/f/ndl72.png"))',
+        'url(@routes.Assets.at("images/f/bdl72.png"))',
+        'url(@routes.Assets.at("images/f/qdl72.png"))',
+        'url(@routes.Assets.at("images/f/kdl72.png"))'
+      ];
+
+      darkImageArray = [
+        'url(@routes.Assets.at("images/f/dsq72.png"))',
+        'url(@routes.Assets.at("images/f/pld72.png"))',
+        'url(@routes.Assets.at("images/f/rld72.png"))',
+        'url(@routes.Assets.at("images/f/nld72.png"))',
+        'url(@routes.Assets.at("images/f/bld72.png"))',
+        'url(@routes.Assets.at("images/f/qld72.png"))',
+        'url(@routes.Assets.at("images/f/kld72.png"))',
+        'url(@routes.Assets.at("images/f/pdd72.png"))',
+        'url(@routes.Assets.at("images/f/rdd72.png"))',
+        'url(@routes.Assets.at("images/f/ndd72.png"))',
+        'url(@routes.Assets.at("images/f/bdd72.png"))',
+        'url(@routes.Assets.at("images/f/qdd72.png"))',
+        'url(@routes.Assets.at("images/f/kdd72.png"))'
+      ];
+
+      squareIDFromIndex = function (index) {
+        var row, col;
+        row = Math.floor(index / 8);
+        col = index % 8;
+        return "s" + String.fromCharCode(97 + col) + (row + 1); 
+      };
+
+      updateBoard = function () {
+        var i, isDark, imgArray;
+
+        isDark = true;
+
+        for(i = 0; i < 64; i = i + 1) {
+          if(isDark) {
+            imgArray = darkImageArray;
+          } else {
+            imgArray = lightImageArray;
+          }
+          $('#' + squareIDFromIndex(i)).css('background-image', imgArray[board[i]]);
+          isDark = !isDark;
+          if(i % 8 === 7) {
+            isDark = !isDark;
+          }
+        }
+      };
+
+      updateBoard();
+
+      function Com(wsURL) {
+        var thiz, WS;
+        thiz = this;
+        WS = window.MozWebSocket ? MozWebSocket : WebSocket;
+        this.socket = new WS(wsURL);
+        this.socket.onopen = function () {
+          alert("Open for business!");
+        };
+        this.socket.onmessage = function (evt) {
+          alert("Got message : " + JSON.stringify(evt));
+        };
+      }
+
+      com = new Com("@routes.Stargazing.socket.webSocketURL()");
+    });
+    </script>
+}
