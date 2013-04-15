@@ -12,6 +12,7 @@ GET     /f/socket                   controllers.Stargazing.socket
 GET     /f                          controllers.Stargazing.index
 
 # Home page
+GET     /h                          controllers.Homepage.index
 GET     /                           controllers.Homepage.index
 
 # Map static resources from the /public folder to the /assets URL path
