@@ -6,6 +6,7 @@
 POST    /m/json                     controllers.Mots.json
 
 GET     /m                          controllers.Mots.index
+GET     /m6                         controllers.Mots.sixletters
 
 # FICS Stargazing
 GET     /f/socket                   controllers.Stargazing.socket

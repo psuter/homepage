@@ -17,6 +17,10 @@ object Mots extends Controller {
     Ok(views.html.mots())
   }
 
+  def sixletters = Action {
+    Ok(views.html.sixletters())
+  }
+
   def json = Action(parse.json) { request =>
     val body = request.body
 

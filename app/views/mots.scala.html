@@ -110,7 +110,7 @@ a {
                     builder = "";
 
                     $.each(res.words, function(w) {
-                        builder = builder + '<a href="http://dictionnaire.tv5.org/?mot=' + res.words[w] + '" target="_blank">' + res.words[w] + '</a>, ';
+                        builder = builder + '<a href="http://dictionnaire.tv5.org/dictionnaire/definition/' + res.words[w] + '" target="_blank">' + res.words[w] + '</a>, ';
                     });
 
                     if(builder !== "") {
