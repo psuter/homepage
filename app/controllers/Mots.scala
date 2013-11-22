@@ -46,4 +46,33 @@ object Mots extends Controller {
       }
     }
   }
+
+  def sixlettersJSON = Action(parse.json) { request =>
+    val body = request.body
+
+    val word = (body \ "word").asOpt[String].filterNot(_.isEmpty)
+
+    val neighbors = Akka.future {
+      models.mots.SixLetters.lookup(word)
+    }
+
+    Async {
+      neighbors.map { ns =>
+        val response = ns match {
+          case Left(msg) =>
+            JsObject(Seq(
+              "status"  -> JsString("error"),
+              "message" -> JsString(msg)
+            ))
+
+          case Right(wordSet) =>
+            JsObject(Seq(
+              "status" -> JsString("OK"),
+              "neighbors" -> JsArray(wordSet.map(JsString(_)).toSeq)
+            ))
+        } 
+        Ok(response).as("application/json")
+      }
+    }
+  }
 }

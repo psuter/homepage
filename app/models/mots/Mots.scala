@@ -1,13 +1,11 @@
 package models.mots
 
-import java.io.File
-import java.io.FileInputStream
 import java.util.Scanner
 
 import play.Play
 
 object Mots {
-  private def normalize(str : String) : String = str.map(c => c match {
+  protected[mots] def normalize(str : String) : String = str.map(c => c match {
     case 'á' | 'à' | 'â' | 'ä' => 'a'
     case 'é' | 'è' | 'ê' | 'ë' => 'e'
     case 'í' | 'ì' | 'î' | 'ï' => 'i'
@@ -18,7 +16,7 @@ object Mots {
     case _ => c
   })
 
-  private case class Entry(
+  protected[mots] case class Entry(
     word : String,
     normalized : String,
     palindrome : Boolean,
@@ -29,7 +27,7 @@ object Mots {
     val distinct = (hitMap.max == 1)
   }
   
-  private lazy val setAndMaxLength = build
+  protected[mots] lazy val setAndMaxLength = build
 
   private lazy val entries : Seq[Entry] = setAndMaxLength._1.toSeq
   private lazy val entriesByWord = entries.sortBy(_.word)

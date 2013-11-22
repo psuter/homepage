@@ -1,18 +1,78 @@
-@main("6 letters", true) {
+@main("6 lettres", includeUI=false, includeD3=true) {
 <div class="row">
     <div class="span12">
-        <h2>6 letters</h2>
+        <h2>6 lettres</h2>
         <hr>
     </div>
 </div>
 
 <div class="row">
     <div class="span3">
+        <br>
 
+        <label>Entrez un mot</label>
+        <input type="text" id="inputfield">
+
+        <br>
+
+        <input type="button" class="btn btn-primary" id="clicker" value="Hop !">
     </div>
     <div class="span9">
-        <h4>Graph</h4>
+        <h4 id="resultstitle"></h4>
+        <p id="resultparagraph"></p> 
     </div>
+
+    <div class="row">
+        <div class="span12">
+            <hr>
+        </div>
+    </div>
+
+    <script>
+        var clicker = d3.select("#clicker");
+        var restit = d3.select("#resultstitle");
+        var restxt = d3.select("#resultparagraph");
+        var wordfield = d3.select("#inputfield");
+
+        var query;
+
+        clicker.on("click", function () {
+            restit.text("Chargement...");
+
+            query = {
+               "word" : wordfield.property("value").trim()
+            };
+
+            d3.xhr("@routes.Mots.sixlettersJSON", "application/json")
+                .header("Content-type", "application/json")
+                .post(JSON.stringify(query), function (error, res) {
+                if(error) {
+                    restit.text("Erreur :(");
+                    restxt.text("(JSON request failed.)");
+                } else {
+                    var response = JSON.parse(res.response);
+
+                    var status = response.status;
+
+                    if(status === "OK") {
+                        restit.text("Résultats");
+                        restxt.text(response.neighbors.join(", "));
+
+
+                        // for(var j = 0; j < response.neighbors.length; j += 1) {
+                        //     var link = d3.select(document.createElement("a"));
+                        //     link.attr("href", "#");
+                        //     link.text(response.neighbors[j]);
+                        //     console.log(link);
+                        // }
+                    } else if(status === "error") {
+                        restit.text("Erreur :(");
+                        restxt.text(response.message);
+                    }
+                }
+            });
+        });
+    </script>
 </div>
 
 }

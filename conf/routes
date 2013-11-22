@@ -4,9 +4,10 @@
 
 # "Les mots" app.
 POST    /m/json                     controllers.Mots.json
+POST    /6/json                     controllers.Mots.sixlettersJSON
 
 GET     /m                          controllers.Mots.index
-GET     /m6                         controllers.Mots.sixletters
+GET     /6                          controllers.Mots.sixletters
 
 # FICS Stargazing
 GET     /f/socket                   controllers.Stargazing.socket
@@ -14,7 +15,6 @@ GET     /f                          controllers.Stargazing.index
 
 # Home page
 GET     /h                          controllers.Homepage.index
-GET     /                           controllers.Homepage.index
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
